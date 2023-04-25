@@ -22,6 +22,6 @@ class Dish(models.Model):
     resturant = models.ForeignKey(Resturant, on_delete = models.CASCADE)
     
     def __str__(self):
-        return f'{self.name} {self.price}'
+        return f'{self.name} {self.price} {self.tags}'
 
 
