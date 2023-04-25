@@ -18,7 +18,7 @@ class Dish(models.Model):
     description = models.TextField()
     price = models.IntegerField()
     image = models.ImageField(null = False, blank = False)
-    tags = models.ManyToManyField('Tags')
+    tags = models.ForeignKey(Tags, on_delete = models.CASCADE, null = True)
     resturant = models.ForeignKey(Resturant, on_delete = models.CASCADE)
     
     def __str__(self):
