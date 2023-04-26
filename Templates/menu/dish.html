@@ -1,0 +1,11 @@
+{% extends 'menu/index.html' %}
+
+{% block container%}
+{% if form == 'dish_creation' %}
+    <p>dish creation</p>
+    {% elif form == 'dish_modification' %}
+    <p>dish modification</p>
+    {% else %}
+    <p>dish deletion</p>
+{% endif %}
+{% endblock container %}

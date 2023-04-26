@@ -13,25 +13,41 @@ from .forms import *
 def index(request):
     dish = Dish.objects.all()
     user = request.user
-    user = str(user)
+    user_name = str(user)
+    try:
+        customer = Customer.objects.get(user = user)
+        designation = customer.designation
+    except TypeError:
+        context = {
+            'dish' : dish,
+            'user' : user_name,
+        }
+        return render(request, 'menu/index.html', context=context)
+    if str(customer.designation) == 'Restaurant':
+        new_dish = []
+        for i in dish:
+            if i.restaurant == customer.user:
+                new_dish.append(i)
+        dish = new_dish
     context = {
         'dish': dish,
-        'user': user
+        'user': user_name,
+        'designation' : str(designation),
     }
     return render(request, 'menu/index.html', context=context)
 
 
-def resturant_search(request, rest):
+def restaurant_search(request, rest):
     dish = []
     for i in Dish.objects.all():
-        resturant = str(i.resturant)
-        if resturant == rest:
+        restaurant = str(i.restaurant)
+        if restaurant == rest:
             dish.append(i)
     user = request.user
     user = str(user)
     context = {
         'dish': dish,
-        'resturant': rest,
+        'restaurant': rest,
         'user': user
     }
     return render(request, 'menu/index.html', context=context)
@@ -115,3 +131,27 @@ def log_in(request):
             messages.error(request, 'username or password is incorrect')
             return redirect('log_in')
     return render(request, 'menu/log_in.html')
+
+
+@login_required
+def dish_creation(request):
+    context = {
+        'form' : 'dish_creation'
+    }
+    return render(request, 'menu/dish.html', context = context)
+
+
+@login_required
+def dish_modification(request):
+    context = {
+        'form': 'dish_modification'
+    }
+    return render(request, 'menu/dish.html', context=context)
+
+
+@login_required
+def dish_deletion(request):
+    context = {
+        'form': 'dish_deletion'
+    }
+    return render(request, 'menu/dish.html', context=context)

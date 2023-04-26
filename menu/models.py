@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User as Resturant
+from django.contrib.auth.models import User as restaurant
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -20,7 +20,7 @@ class Dish(models.Model):
     price = models.IntegerField()
     image = models.ImageField(null = False, blank = False)
     tags = models.ForeignKey(Tags, on_delete = models.CASCADE, null = True)
-    resturant = models.ForeignKey(Resturant, on_delete = models.CASCADE)
+    restaurant = models.ForeignKey(restaurant, on_delete = models.CASCADE)
     
     def __str__(self):
         return f'{self.name} {self.price} {self.tags}'
