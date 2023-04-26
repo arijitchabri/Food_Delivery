@@ -11,10 +11,14 @@ from .forms import *
 
 def index(request):
     dish = Dish.objects.all()
+    user = request.user
+    user = str(user)
     context = {
-        'dish' : dish
+        'dish' : dish,
+        'user' : user
     }
     return render(request, 'menu/index.html', context = context)
+
 
 def resturant_search(request, rest):
     dish = []
@@ -22,9 +26,12 @@ def resturant_search(request, rest):
         resturant = str(i.resturant)
         if resturant == rest:
             dish.append(i)
+    user = request.user
+    user = str(user)
     context = {
         'dish' : dish,
-        'resturant' : rest
+        'resturant' : rest,
+        'user' : user
     }
     return render(request, 'menu/index.html', context = context)
 
@@ -35,11 +42,15 @@ def tag_search(request, tag):
         tags = str(i.tags)
         if tags == tag:
             dish.append(i)
+    user = request.user
+    user = str(user)
     context = {
         'dish' : dish,
-        'tag' : tag
+        'tag' : tag,
+        'user' : user
     }
     return render(request, 'menu/index.html', context = context)
+
 
 def user_creation(request):
     form = UserCreationForm
@@ -55,7 +66,8 @@ def user_creation(request):
     context = {
         'form' : form,
     }
-    return render(request, 'menu/customer_creation', context = context)
+    return render(request, 'menu/customer_creation.html', context = context)
+
 
 @login_required
 def customer_creation(request):
@@ -72,4 +84,13 @@ def customer_creation(request):
         'form' : form,
     }
 
-    return render(request, 'menu/customer_creation', context = context)
+    return render(request, 'menu/customer_creation.html', context = context)
+
+
+def log_out(request):
+    logout(request)
+    return redirect('index')
+
+
+def log_in(request):
+    pass

@@ -35,6 +35,17 @@
         </div>
       </nav>
       {% block container%}
+          {% if user == 'AnonymousUser' %}
+          <button ><a href="{% url 'user_creation' %}">log in</a></button>
+          <button ><a href="{% url 'customer_creation' %}">sing up</a></button>
+              {% else %}
+              <button ><a href="{% url 'log_out' %}">log out</a></button>
+          {% endif %}
+
+          {% if message %}
+              <p>{{ message }}</p>
+          {% endif %}
+
       {%if resturant or tag%}
         <p>showing dishes from {{resturant}} {{tag}}</p>
       {%endif%}
