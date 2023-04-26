@@ -15,7 +15,7 @@
 
     <nav class="navbar navbar-expand-lg bg-dark ">
         <div class="container-fluid">
-          <a class="navbar-brand text-white" href="#">FoodKart</a>
+          <a class="navbar-brand text-white" href="{% url 'index' %}">FoodKart</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon text-white"></span>
           </button>
@@ -34,8 +34,9 @@
           </div>
         </div>
       </nav>
-
-      <p>showing dishes from {{resturant}}</p>
+      {%if resturant or tag%}
+        <p>showing dishes from {{resturant}} {{tag}}</p>
+      {%endif%}
 
     {%for i in dish%}
     <div class="container">
@@ -45,7 +46,8 @@
           <h5 class="card-title">{{i.name}} <span class="mx-3">{{i.price}}</span></h5>
           <p class="card-text">{{i.description}}</p>
           <button ><a href="{% url 'resturant_search' i.resturant%}">{{i.resturant}}</a></button>
-          <p class="card-text text-info">{{i.tags}}</p>
+          <button ><a href="{% url 'tag_search' i.tags%}">{{i.tags}}</a></button>
+          <br>
           <a href="#" class="btn btn-primary">Add to Cart</a>
         </div>
       </div>

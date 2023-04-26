@@ -21,3 +21,16 @@ def resturant_search(request, rest):
         'resturant' : rest
     }
     return render(request, 'menu/index.html', context = context)
+
+
+def tag_search(request, tag):
+    dish = []
+    for i in Dish.objects.all():
+        tags = str(i.tags)
+        if tags == tag:
+            dish.append(i)
+    context = {
+        'dish' : dish,
+        'tag' : tag
+    }
+    return render(request, 'menu/index.html', context = context)
