@@ -60,7 +60,7 @@ def user_creation(request):
         if form.is_valid():
             form.save()
             username = request.POST['username']
-            password = request.POST['password']
+            password = request.POST['password1']
             user = authenticate(request, username=username, password=password)
             login(request, user)
         return redirect('customer_creation')
@@ -80,7 +80,7 @@ def customer_creation(request):
             user = User.objects.get(username=request.user)
             form.user = user
             form.save()
-            messages.success('Your account is created successfully.')
+            messages.success(request,'Your account is created successfully.')
         return redirect('index')
     context = {
         'form': form,

@@ -26,12 +26,24 @@ class Dish(models.Model):
         return f'{self.name} {self.price} {self.tags}'
     
 
+class Designation(models.Model):
+    id = models.AutoField(primary_key = True)
+    designation = models.CharField(max_length = 20)
+
+    def __str__(self):
+        return f'{self.designation}'
+
+def get_default_designation():
+    return Designation.objects.get(id = 2)
+
 class Customer(models.Model):
     id = models.AutoField(primary_key = True)
     name = models.CharField(max_length=200)
     address = models.CharField(max_length=400)
     ph = models.BigIntegerField()
     user = models.OneToOneField(User, on_delete = models.CASCADE)
+    designation = models.ForeignKey(Designation, on_delete = models.CASCADE,
+                                    null=True, default = get_default_designation)
 
     def __str__(self):
         return f'{self.id}    {self.name}'

@@ -5,3 +5,4 @@ from . models import *
 admin.site.register(Dish)
 admin.site.register(Tags)
 admin.site.register(Customer)
+admin.site.register(Designation)

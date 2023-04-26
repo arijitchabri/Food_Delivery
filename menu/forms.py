@@ -7,4 +7,4 @@ class Customer_form(forms.ModelForm):
     class Meta:
         model = Customer
         fields = '__all__'
-        exclude = ['user']
+        exclude = ['user', 'designation']
