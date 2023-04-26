@@ -35,9 +35,16 @@
         </div>
       </nav>
       {% block container%}
+
+          {% for i in messages %}
+            <p>
+            {{ i }}
+            </p>
+          {% endfor %}
+
           {% if user == 'AnonymousUser' %}
-          <button ><a href="{% url 'user_creation' %}">log in</a></button>
-          <button ><a href="{% url 'customer_creation' %}">sing up</a></button>
+          <button ><a href="{% url 'user_creation' %}">sing up</a></button>
+          <button ><a href="{% url 'log_in' %}">log in</a></button>
               {% else %}
               <button ><a href="{% url 'log_out' %}">log out</a></button>
           {% endif %}
