@@ -35,6 +35,7 @@
         </div>
       </nav>
 
+      <p>showing dishes from {{resturant}}</p>
 
     {%for i in dish%}
     <div class="container">
@@ -43,7 +44,7 @@
         <div class="card-body">
           <h5 class="card-title">{{i.name}} <span class="mx-3">{{i.price}}</span></h5>
           <p class="card-text">{{i.description}}</p>
-          <p class="card-text text-info">{{i.resturant}}</p>
+          <button ><a href="{% url 'resturant_search' i.resturant%}">{{i.resturant}}</a></button>
           <p class="card-text text-info">{{i.tags}}</p>
           <a href="#" class="btn btn-primary">Add to Cart</a>
         </div>
