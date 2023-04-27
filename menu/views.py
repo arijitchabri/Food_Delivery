@@ -15,12 +15,12 @@ def index(request):
     user = request.user         # Collecting the requested user.
     user_name = str(user)       # Logged in users name as string.
     try:
-        customer = Customer.objects.get(user=user)    # Collecting the customer.
+        customer = Customer.objects.get(user=user)      # Collecting the customer.
         designation = str(customer.designation)         # Designation of logged in customer.
-    except TypeError:             # If its an anonymous user the he will have no designation.
+    except TypeError:               # If its an anonymous user the he will have no designation.
         context = {
-            'dish': dish,          # All available dishes.
-            'user': user_name,     # Logged in user's name as a string.
+            'dish': dish,           # All available dishes.
+            'user': user_name,      # Logged in user's name as a string.
         }
         return render(request, 'menu/index.html', context=context)
     except Customer.DoesNotExist:
@@ -35,7 +35,7 @@ def index(request):
     context = {
         'dish': dish,                       # All the viewable dishes.
         'user': user_name,                  # Logged in user's name as a string.
-        'designation': designation,        # Designation of the user.
+        'designation': designation,         # Designation of the user.
     }
     print(designation, type(designation))
     return render(request, 'menu/index.html', context=context)
@@ -45,7 +45,7 @@ def restaurant_search(request, rest):
     # Filtering through specific restaurant.
 
     restaurant = User.objects.get(username=rest)            # Collecting the restaurant.
-    dish = Dish.objects.filter(restaurant=restaurant)     # Filtering the dishes.
+    dish = Dish.objects.filter(restaurant=restaurant)       # Filtering the dishes.
     user = request.user
     user_name = str(user)
     context = {
@@ -63,12 +63,12 @@ def tag_search(request, tag):
     user = request.user
     user_name = str(user)
     try:
-        customer = Customer.objects.get(user=user)    # Collecting the customer.
+        customer = Customer.objects.get(user=user)      # Collecting the customer.
         designation = str(customer.designation)         # Designation of logged in customer.
-    except TypeError:           # If its an anonymous user the he will have no designation.
+    except TypeError:               # If its an anonymous user the he will have no designation.
         context = {
-            'dish': dish,          # All available dishes.
-            'user': user_name,     # Logged in user's name as a string.
+            'dish': dish,           # All available dishes.
+            'user': user_name,      # Logged in user's name as a string.
         }
         return render(request, 'menu/index.html', context=context)
     if designation == 'Restaurant':
@@ -86,7 +86,7 @@ def tag_search(request, tag):
 @login_required
 def dish_creation(request):
     # Creating dish by using the forms
-    form = Dish_creation_Form                    # Storing the empty form
+    form = DishCreationForm                      # Storing the empty form
     user = request.user                          # Logged in user
     customer = Customer.objects.get(user=user)
     if customer.designation != 'Restaurant':
@@ -94,7 +94,7 @@ def dish_creation(request):
         messages.error(request, 'Only Restaurants can add dish.')
         return redirect('index')
     if request.method == 'POST':
-        form = Dish_creation_Form(request.POST, request.FILES)      # Storing the submitted form
+        form = DishCreationForm(request.POST, request.FILES)        # Storing the submitted form
         if form.is_valid():                                         # Validating the form
             form = form.save(commit=False)                          # Saving the form but not submitting yet
             form.restaurant = user                                  # Adding the user
@@ -113,10 +113,10 @@ def dish_modification(request, dish_id):
     dish = Dish.objects.get(id=dish_id)
     user = request.user
     restaurant = user
-    form = Dish_creation_Form(instance=dish)        # Storing the dish which we want to modify.
+    form = DishCreationForm(instance=dish)          # Storing the dish which we want to modify.
     if str(restaurant) == str(dish.restaurant):     # Dish modification can only be done by the owner restaurant.
         if request.method == 'POST':
-            form = Dish_creation_Form(request.POST, request.FILES, instance=dish)
+            form = DishCreationForm(request.POST, request.FILES, instance=dish)
             if form.is_valid():
                 form = form.save(commit=False)
                 form.restaurant = user
@@ -178,9 +178,9 @@ def user_creation(request):
 
 @login_required
 def customer_creation(request):
-    form = Customer_form                    # Storing the Customer creation form.
+    form = CustomerForm                     # Storing the Customer creation form.
     if request.method == 'POST':
-        form = Customer_form(request.POST)  # Storing the send data in the form.
+        form = CustomerForm(request.POST)   # Storing the send data in the form.
         if form.is_valid():                 # Validating the form.
             form = form.save(commit=False)  # If the from is validated okay then its been saved but not stored.
             user = User.objects.get(username=request.user)  # Retrieving the logged in user.
