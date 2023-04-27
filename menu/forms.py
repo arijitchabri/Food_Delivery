@@ -9,7 +9,7 @@ class Customer_form(forms.ModelForm):
         fields = '__all__'
         exclude = ['user', 'designation']
 
-class Dish_creation(forms.ModelForm):
+class Dish_creation_Form(forms.ModelForm):
 
     class Meta:
         model = Dish

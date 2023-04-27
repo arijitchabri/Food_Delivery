@@ -4,69 +4,149 @@ from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .models import *
+from django.contrib.auth.models import User
+from .models import Tags, Dish, Designation, Customer
 from .forms import *
 
 
 # Create your views here.
-
+# Index handles the landing page.
 def index(request):
-    dish = Dish.objects.all()
-    user = request.user
-    user_name = str(user)
+    dish = Dish.objects.all()   # Collecting all the dishes.
+    user = request.user         # Collecting the requested user.
+    user_name = str(user)       # Logged in users name as string.
     try:
-        customer = Customer.objects.get(user = user)
-        designation = customer.designation
-    except TypeError:
+        customer = Customer.objects.get(user = user)    # Collecting the customer.
+        designation = str(customer.designation)         # Designation of logged in customer.
+    except TypeError:           # If its an anonymous user the he will have no designation.
         context = {
-            'dish' : dish,
-            'user' : user_name,
+            'dish' : dish,          # All available dishes.
+            'user' : user_name,     # Logged in user's name as a string.
         }
         return render(request, 'menu/index.html', context=context)
-    if str(customer.designation) == 'Restaurant':
-        new_dish = []
-        for i in dish:
-            if i.restaurant == customer.user:
-                new_dish.append(i)
-        dish = new_dish
+
+    #  For general user all the dishes will show.
+    # If the requested user is a Restaurant then only its menu will appear.
+
+    if designation == 'Restaurant':
+        dish = Dish.objects.filter(restaurant = user)
     context = {
-        'dish': dish,
-        'user': user_name,
-        'designation' : str(designation),
+        'dish': dish,                       # All the viewable dishes.
+        'user': user_name,                  # Logged in user's name as a string.
+        'designation' : designation,        # Designation of the user.
     }
+    print(designation, type(designation))
     return render(request, 'menu/index.html', context=context)
 
 
 def restaurant_search(request, rest):
-    dish = []
-    for i in Dish.objects.all():
-        restaurant = str(i.restaurant)
-        if restaurant == rest:
-            dish.append(i)
+    # Filtering through specific restaurant.
+
+    restaurant = User.objects.get(username=rest)            # Collecting the restaurant.
+    dish = Dish.objects.filter(restaurant = restaurant)     # Filtering the dishes.
     user = request.user
-    user = str(user)
+    user_name = str(user)
     context = {
         'dish': dish,
         'restaurant': rest,
-        'user': user
+        'user': user_name,
     }
     return render(request, 'menu/index.html', context=context)
 
 
 def tag_search(request, tag):
-    dish = []
-    for i in Dish.objects.all():
-        tags = str(i.tags)
-        if tags == tag:
-            dish.append(i)
+    # Filtering through tag.
+    tag = Tags.objects.get(tag = tag)
+    dish = Dish.objects.filter(tags = tag)
     user = request.user
-    user = str(user)
+    user_name = str(user)
+    try:
+        customer = Customer.objects.get(user = user)    # Collecting the customer.
+        designation = str(customer.designation)         # Designation of logged in customer.
+    except TypeError:           # If its an anonymous user the he will have no designation.
+        context = {
+            'dish' : dish,          # All available dishes.
+            'user' : user_name,     # Logged in user's name as a string.
+        }
+        return render(request, 'menu/index.html', context=context)
+    if designation == 'Restaurant':
+        # If the designation is resturant then it will filter all the dishes of that restaurant with the same tag.
+        dish = Dish.objects.filter(restaurant = user, tags = tag)
     context = {
         'dish': dish,
         'tag': tag,
-        'user': user
+        'user': user_name,
+        'designation' : designation,
     }
     return render(request, 'menu/index.html', context=context)
+
+@login_required
+def dish_creation(request):
+    form = Dish_creation_Form
+    user = request.user
+    if request.method == 'POST':
+        form = Dish_creation_Form(request.POST, request.FILES)
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.restaurant = user
+            form.save()
+            messages.success(request, 'Dish added successfully.')
+            return redirect('index')
+    context = {
+        'form_type' : 'dish_creation',
+        'form' : form
+    }
+    return render(request, 'menu/dish.html', context = context)
+
+
+@login_required
+def dish_modification(request, dish_id):
+    dish = Dish.objects.get(id = dish_id)
+    user = request.user
+    restaurant = user
+    form = Dish_creation_Form(instance=dish)
+    if str(restaurant) == str(dish.restaurant):
+        if request.method == 'POST':
+            form = Dish_creation_Form(request.POST, request.FILES, instance = dish)
+            if form.is_valid():
+                form = form.save(commit=False)
+                form.restaurant = user
+                form.save()
+                messages.success(request, 'Dish modified successfully.')
+                return redirect('index')
+    else:
+        messages.error(request, 'You are not authorized to modify others menu.')
+        return redirect('index')
+    context = {
+        'form_type': 'dish_modification',
+        'id' : dish_id,
+        'form' : form,
+
+    }
+    return render(request, 'menu/dish.html', context=context)
+
+
+@login_required
+def dish_deletion(request, dish_id):
+    dish = Dish.objects.get(id = dish_id)
+    user = request.user
+    restaurant = user
+    if str(restaurant) == str(dish.restaurant):
+        if request.method == 'POST':
+            dish.delete()
+            messages.success(request, 'Dish deleted successfully.')
+            return redirect('index')
+    else:
+        messages.error(request, 'You are not authorized to modify others menu.')
+        return redirect('index')
+
+    context = {
+        'form_type': 'dish_deletion',
+        'id' : dish_id,
+        'dish' : dish,
+    }
+    return render(request, 'menu/dish.html', context=context)
+
 
 
 def user_creation(request):
@@ -131,71 +211,3 @@ def log_in(request):
             messages.error(request, 'username or password is incorrect')
             return redirect('log_in')
     return render(request, 'menu/log_in.html')
-
-
-@login_required
-def dish_creation(request):
-    form = Dish_creation
-    user = request.user
-    if request.method == 'POST':
-        form = Dish_creation(request.POST, request.FILES)
-        if form.is_valid():
-            form = form.save(commit=False)
-            form.restaurant = user
-            form.save()
-            messages.success(request, 'Dish added successfully.')
-            return redirect('index')
-    context = {
-        'form_type' : 'dish_creation',
-        'form' : form
-    }
-    return render(request, 'menu/dish.html', context = context)
-
-
-@login_required
-def dish_modification(request, dish_id):
-    dish = Dish.objects.get(id = dish_id)
-    user = request.user
-    restaurant = user
-    form = Dish_creation(instance=dish)
-    if str(restaurant) == str(dish.restaurant):
-        if request.method == 'POST':
-            form = Dish_creation(request.POST, request.FILES, instance = dish)
-            if form.is_valid():
-                form = form.save(commit=False)
-                form.restaurant = user
-                form.save()
-                messages.success(request, 'Dish modified successfully.')
-                return redirect('index')
-    else:
-        messages.error(request, 'You are not authorized to modify others menu.')
-        return redirect('index')
-    context = {
-        'form_type': 'dish_modification',
-        'id' : dish_id,
-        'form' : form,
-
-    }
-    return render(request, 'menu/dish.html', context=context)
-
-
-@login_required
-def dish_deletion(request, dish_id):
-    dish = Dish.objects.get(id = dish_id)
-    user = request.user
-    restaurant = user
-    if str(restaurant) == str(dish.restaurant):
-        if request.method == 'POST':
-            dish.delete()
-            messages.success(request, 'Dish deleted successfully.')
-            return redirect('index')
-    else:
-        messages.error(request, 'You are not authorized to modify others menu.')
-        return redirect('index')
-
-    context = {
-        'form_type': 'dish_deletion',
-        'id' : dish_id,
-        'dish' : dish,
-    }
-    return render(request, 'menu/dish.html', context=context)

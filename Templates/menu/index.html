@@ -64,7 +64,6 @@
                     <div class="card-body">
                         <h5 class="card-title">{{i.name}} <span class="mx-3">{{i.price}}</span></h5>
                         <p class="card-text">{{i.description}}</p>
-                        <button ><a href="{% url 'restaurant_search' i.restaurant%}">{{i.restaurant}}</a></button>
                         <button ><a href="{% url 'tag_search' i.tags%}">{{i.tags}}</a></button>
                         <br>
                         <a href="#" class="btn btn-primary">Add to Cart</a>
