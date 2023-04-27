@@ -1,12 +1,14 @@
 {% extends 'menu/index.html' %}
 
 {% block container%}
-<hr>
-<form action="" method="POST" enctype = 'multipart/form-data'>
-    {% csrf_token %}
-    {{form.as_p}}
-    <input type="submit">
-</form>
-<hr>
+    {% for i in message %}
+        {{ i }}
+    {% endfor %}
+
+    <form action="" method="POST" enctype = 'multipart/form-data'>
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type="submit">
+    </form>
 
 {% endblock container%}

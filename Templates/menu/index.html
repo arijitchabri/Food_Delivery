@@ -34,48 +34,28 @@
           </div>
         </div>
       </nav>
-      {% block container%}
 
-          {% for i in messages %}
+        {% for i in messages %}
             <p>
             {{ i }}
             </p>
-          {% endfor %}
+        {% endfor %}
+    {% block container%}
+      {% if user == 'AnonymousUser' %}
+      <button ><a href="{% url 'user_creation' %}">sing up</a></button>
+      <button ><a href="{% url 'log_in' %}">log in</a></button>
+          {% else %}
+          <button ><a href="{% url 'log_out' %}">log out</a></button>
+      {% endif %}
 
-          {% if user == 'AnonymousUser' %}
-          <button ><a href="{% url 'user_creation' %}">sing up</a></button>
-          <button ><a href="{% url 'log_in' %}">log in</a></button>
-              {% else %}
-              <button ><a href="{% url 'log_out' %}">log out</a></button>
-          {% endif %}
-
-          {% if message %}
-              <p>{{ message }}</p>
-          {% endif %}
+      {% if message %}
+          <p>{{ message }}</p>
+      {% endif %}
 
       {%if restaurant or tag%}
         <p>showing dishes from {{restaurant}} {{tag}}</p>
       {%endif%}
-    {% if designation == 'Restaurant' %}
-        {%for i in dish%}
-            <div class="container">
-                <div class="card mx-5" style="width: 18rem;">
-                    <img src="{{i.image.url}}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">{{i.name}} <span class="mx-3">{{i.price}}</span></h5>
-                        <p class="card-text">{{i.description}}</p>
-                        <button ><a href="{% url 'tag_search' i.tags%}">{{i.tags}}</a></button>
-                        <br>
-                        <a href="#" class="btn btn-primary">Add to Cart</a>
-                        <button ><a href="{% url 'dish_modification' i.id%}">modify</a></button>
-                        <button ><a href="{% url 'dish_deletion' i.id%}">delete</a></button>
-                    </div>
-                </div>
-            </div>
-            <br><br>
-        {%endfor%}
-        <button ><a href="{% url 'dish_creation' %}">Add new dish</a></button>
-        {% else %}
+        {% if designation == 'Restaurant' %}
             {%for i in dish%}
                 <div class="container">
                     <div class="card mx-5" style="width: 18rem;">
@@ -83,21 +63,40 @@
                         <div class="card-body">
                             <h5 class="card-title">{{i.name}} <span class="mx-3">{{i.price}}</span></h5>
                             <p class="card-text">{{i.description}}</p>
-                            <button ><a href="{% url 'restaurant_search' i.restaurant%}">{{i.restaurant}}</a></button>
                             <button ><a href="{% url 'tag_search' i.tags%}">{{i.tags}}</a></button>
                             <br>
                             <a href="#" class="btn btn-primary">Add to Cart</a>
+                            <button ><a href="{% url 'dish_modification' i.id%}">modify</a></button>
+                            <button ><a href="{% url 'dish_deletion' i.id%}">delete</a></button>
                         </div>
                     </div>
                 </div>
                 <br><br>
             {%endfor%}
-    {% endif %}
+            <button ><a href="{% url 'dish_creation' %}">Add new dish</a></button>
+            {% else %}
+                {%for i in dish%}
+                    <div class="container">
+                        <div class="card mx-5" style="width: 18rem;">
+                            <img src="{{i.image.url}}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">{{i.name}} <span class="mx-3">{{i.price}}</span></h5>
+                                <p class="card-text">{{i.description}}</p>
+                                <button ><a href="{% url 'restaurant_search' i.restaurant%}">{{i.restaurant}}</a></button>
+                                <button ><a href="{% url 'tag_search' i.tags%}">{{i.tags}}</a></button>
+                                <br>
+                                <a href="#" class="btn btn-primary">Add to Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                    <br><br>
+                {%endfor%}
+        {% endif %}
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
         integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
         crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
         integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
         crossorigin="anonymous"></script>
 
