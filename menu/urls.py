@@ -19,7 +19,7 @@ urlpatterns = [
     # dish modification
 
     path('dc', views.dish_creation, name = 'dish_creation'),
-    path('dm', views.dish_modification, name = 'dish_modification'),
-    path('dd', views.dish_deletion, name = 'dish_deletion'),
+    path('dm/<int:dish_id>', views.dish_modification, name = 'dish_modification'),
+    path('dd/<int:dish_id>', views.dish_deletion, name = 'dish_deletion'),
 
 ]

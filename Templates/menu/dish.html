@@ -1,11 +1,27 @@
 {% extends 'menu/index.html' %}
 
 {% block container%}
-{% if form == 'dish_creation' %}
-    <p>dish creation</p>
-    {% elif form == 'dish_modification' %}
-    <p>dish modification</p>
+
+{% if form_type == 'dish_creation' %}
+
+    {#     Dish creation    #}
+    <form action="{% url 'dish_creation'%}" method="POST" enctype = 'multipart/form-data'>
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit">
+    </form>
+
+    {#     Dish Modification    #}
+    {% elif form_type == 'dish_modification' %}
+    <form action="{% url 'dish_modification' id %}" method="POST" enctype = 'multipart/form-data'>
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit">
+    </form>
+
+
+    {#     Dish creation    #}
     {% else %}
-    <p>dish deletion</p>
+    <p>dish deletion  {{ id }}</p>
 {% endif %}
 {% endblock container %}

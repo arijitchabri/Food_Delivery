@@ -135,23 +135,54 @@ def log_in(request):
 
 @login_required
 def dish_creation(request):
+    form = Dish_creation
+    user = request.user
+    if request.method == 'POST':
+        form = Dish_creation(request.POST, request.FILES)
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.restaurant = user
+            form.save()
+            messages.success(request, 'Dish added successfully.')
+            return redirect('index')
     context = {
-        'form' : 'dish_creation'
+        'form_type' : 'dish_creation',
+        'form' : form
     }
     return render(request, 'menu/dish.html', context = context)
 
 
 @login_required
-def dish_modification(request):
+def dish_modification(request, dish_id):
+    dish = Dish.objects.get(id = dish_id)
+    user = request.user
+    restaurant = user
+    form = Dish_creation(instance=dish)
+    if str(restaurant) == str(dish.restaurant):
+        if request.method == 'POST':
+            form = Dish_creation(request.POST, request.FILES, instance = dish)
+            if form.is_valid():
+                form = form.save(commit=False)
+                form.restaurant = user
+                form.save()
+                messages.success(request, 'Dish modified successfully.')
+                return redirect('index')
+    else:
+        messages.error(request, 'You are not authorized to modify others menu.')
+        return redirect('index')
     context = {
-        'form': 'dish_modification'
+        'form_type': 'dish_modification',
+        'id' : dish_id,
+        'form' : form,
+
     }
     return render(request, 'menu/dish.html', context=context)
 
 
 @login_required
-def dish_deletion(request):
+def dish_deletion(request, dish_id):
     context = {
-        'form': 'dish_deletion'
+        'form_type': 'dish_deletion',
+        'id' : dish_id,
     }
     return render(request, 'menu/dish.html', context=context)
