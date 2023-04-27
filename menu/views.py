@@ -181,8 +181,21 @@ def dish_modification(request, dish_id):
 
 @login_required
 def dish_deletion(request, dish_id):
+    dish = Dish.objects.get(id = dish_id)
+    user = request.user
+    restaurant = user
+    if str(restaurant) == str(dish.restaurant):
+        if request.method == 'POST':
+            dish.delete()
+            messages.success(request, 'Dish deleted successfully.')
+            return redirect('index')
+    else:
+        messages.error(request, 'You are not authorized to modify others menu.')
+        return redirect('index')
+
     context = {
         'form_type': 'dish_deletion',
         'id' : dish_id,
+        'dish' : dish,
     }
     return render(request, 'menu/dish.html', context=context)
