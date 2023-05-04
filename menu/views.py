@@ -89,7 +89,7 @@ def dish_creation(request):
     form = DishCreationForm                      # Storing the empty form
     user = request.user                          # Logged in user
     customer = Customer.objects.get(user=user)
-    if customer.designation != 'Restaurant':
+    if str(customer.designation) != 'Restaurant':
         # If the user is not a restaurant he can not add a dish.
         messages.error(request, 'Only Restaurants can add dish.')
         return redirect('index')
